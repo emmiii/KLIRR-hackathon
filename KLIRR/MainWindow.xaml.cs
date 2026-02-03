@@ -181,7 +181,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Logga_Click(object sender, RoutedEventArgs e)
+    private void Ny_Logg_Click(object sender, RoutedEventArgs e)
     {
         LogEntryWindow logEntryWindow = new() { Owner = this };
         if (logEntryWindow.ShowDialog() == true)
