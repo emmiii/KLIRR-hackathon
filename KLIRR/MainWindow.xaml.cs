@@ -157,10 +157,10 @@ public partial class MainWindow : Window
                 }
 
                 var existingSet = existingEntries
-                    .Select(e => (e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay))
+                    .Select(e => (e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay, e.MachineName))
                     .ToHashSet();
                 var uniqueImported = importedEntries
-                    .Where(e => !existingSet.Contains((e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay)))
+                    .Where(e => !existingSet.Contains((e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay, e.MachineName)))
                     .ToList();
 
                 existingEntries.AddRange(uniqueImported);
