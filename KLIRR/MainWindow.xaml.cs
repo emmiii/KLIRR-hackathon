@@ -22,7 +22,12 @@ public partial class MainWindow : Window
         LogEntriesView.Filter = FilterLogEntries;
         DataContext = this;
         SettingsManager.Load();
-        ReadData();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        await ReadData();
     }
 
     private bool FilterLogEntries(object obj)
@@ -58,24 +63,38 @@ public partial class MainWindow : Window
         LogEntriesView?.Refresh();
     }
 
-    private void ReadData()
+    private async Task ReadData()
     {
         var logFilePath = SettingsManager.Settings.LogFilePath;
         try
         {
             if (File.Exists(logFilePath))
             {
-                var content = File.ReadAllText(logFilePath);
+                var content = await File.ReadAllTextAsync(logFilePath);
                 if (!string.IsNullOrWhiteSpace(content))
                 {
-                    var data = (JsonSerializer.Deserialize<List<LogEntry>>(content) ?? []).OrderByDescending(le => le.Tid);
-                    LogEntries.Clear();
-                    
-                    foreach (var entry in data)
-                    {
-                        LogEntries.Add(entry);
+                    try 
+                    { 
+                        var data = (JsonSerializer.Deserialize<List<LogEntry>>(content));
+                        LogEntries.Clear();
+
+                        if (data == null)
+                        {
+                            return;
+                        }
+                        foreach (var entry in data.OrderByDescending(le => le.Tid))
+                        {
+                            LogEntries.Add(entry);
+                        }
+                        return;
                     }
-                    return;
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Loggfilen gick inte att läsa.", "Fel", MessageBoxButton.OK, MessageBoxImage.Error);
+                        LogEntries.Clear();
+                        FileLogger.LogError($"Failed to deserialize log file: {e.Message}");
+                        return;
+                    }
                 }
             }
 
@@ -123,7 +142,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Importera_Click(object sender, RoutedEventArgs e)
+    private async void Importera_Click(object sender, RoutedEventArgs e)
     {
         OpenFileDialog openFileDialog = new OpenFileDialog
         {
@@ -137,7 +156,7 @@ public partial class MainWindow : Window
             try
             {
                 var logFilePath = SettingsManager.Settings.LogFilePath;
-                var importedContent = File.ReadAllText(openFileDialog.FileName);
+                var importedContent = await File.ReadAllTextAsync(openFileDialog.FileName);
                 var importedEntries = JsonSerializer.Deserialize<List<LogEntry>>(importedContent);
 
                 if (importedEntries == null || importedEntries.Count == 0)
@@ -169,7 +188,7 @@ public partial class MainWindow : Window
                 var updatedJson = JsonSerializer.Serialize(existingEntries, options);
                 File.WriteAllText(logFilePath, updatedJson);
 
-                Refresh();
+                await Refresh();
 
                 MessageBox.Show($"{uniqueImported.Count} loggposter har importerats.", "Importera", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -180,12 +199,12 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Ny_Logg_Click(object sender, RoutedEventArgs e)
+    private async void Ny_Logg_Click(object sender, RoutedEventArgs e)
     {
         LogEntryWindow logEntryWindow = new() { Owner = this };
         if (logEntryWindow.ShowDialog() == true)
         {
-            Refresh();
+            await Refresh();
         }
     }
 
@@ -199,23 +218,21 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Installningar_Click(object sender, RoutedEventArgs e)
+    private async void Installningar_Click(object sender, RoutedEventArgs e)
     {
         SettingsWindow settingsWindow = new SettingsWindow();
         settingsWindow.Owner = this;
-        if (settingsWindow.ShowDialog() == true)
-        {
-            Refresh();
-        }
+        settingsWindow.ShowDialog();
+        await Refresh();
     }
 
-    private void Refresh_Click(object sender, RoutedEventArgs e)
+    private async void Refresh_Click(object sender, RoutedEventArgs e)
     {
-        Refresh();
+        await Refresh();
     }
 
-    private void Refresh()
+    private async Task Refresh()
     {
-        ReadData();
+        await ReadData();
     }
 }
