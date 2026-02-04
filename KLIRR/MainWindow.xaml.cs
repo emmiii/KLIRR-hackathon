@@ -68,16 +68,14 @@ public partial class MainWindow : Window
                 var content = File.ReadAllText(logFilePath);
                 if (!string.IsNullOrWhiteSpace(content))
                 {
-                    var data = JsonSerializer.Deserialize<List<LogEntry>>(content);
-                    if (data != null)
+                    var data = (JsonSerializer.Deserialize<List<LogEntry>>(content) ?? []).OrderByDescending(le => le.Tid);
+                    LogEntries.Clear();
+                    
+                    foreach (var entry in data)
                     {
-                        LogEntries.Clear();
-                        foreach (var entry in data.OrderByDescending(e => e.Tid))
-                        {
-                            LogEntries.Add(entry);
-                        }
-                        return;
+                        LogEntries.Add(entry);
                     }
+                    return;
                 }
             }
 

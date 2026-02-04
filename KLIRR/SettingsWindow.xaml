@@ -22,6 +22,10 @@
             <Button Content="Spara" Width="80" HorizontalAlignment="Left" Click="Spara_Sokvag_Click"/>
         </StackPanel>
 
+        <StackPanel Grid.Row="2" VerticalAlignment="Top" Margin="0,10,0,0">
+            <Button Content="Öppna applikationslogg" Width="160" HorizontalAlignment="Left" Click="OppnaApplikationslogg_Click"/>
+        </StackPanel>
+
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Stäng" Width="80" Click="Stang_Click"/>
         </StackPanel>

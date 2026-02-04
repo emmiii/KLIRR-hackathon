@@ -14,6 +14,7 @@ public partial class LogEntryWindow : Window
     {
         InitializeComponent();
         _isReadOnly = false;
+        FileLogger.LogInfo("LogEntryWindow opened for new entry.");
     }
 
     public LogEntryWindow(LogEntry entry)
@@ -41,8 +42,11 @@ public partial class LogEntryWindow : Window
         MessageTextBox.IsReadOnly = true;
         DecisionTextBox.IsReadOnly = true;
         TagTextBox.IsReadOnly = true;
+        MachineNameLabel.Text = $"Dator namn: {entry.MachineName}";
+        MachineNameLabel.Visibility = Visibility.Visible;
 
         Title = $"Loggpost: {entry.Titel}";
+        FileLogger.LogInfo($"LogEntryWindow opened for viewing entry: {entry.Titel}");
     }
 
     private async void Save_Click(object sender, RoutedEventArgs e)
@@ -70,6 +74,7 @@ public partial class LogEntryWindow : Window
 
         if (errors.Count > 0)
         {
+            FileLogger.LogInfo($"Validation failed: {string.Join(", ", errors)}");
             MessageBox.Show($"Följande fält måste anges: {string.Join(", ", errors)}.", "Valideringsfel", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
@@ -90,22 +95,31 @@ public partial class LogEntryWindow : Window
 
     private static async Task SaveEntryAsync(LogEntry entry)
     {
-        var filePath = SettingsManager.Settings.LogFilePath;
-        var entries = new List<LogEntry>();
-
-        if (File.Exists(filePath))
+        try
         {
-            var json = await File.ReadAllTextAsync(filePath);
-            if (!string.IsNullOrWhiteSpace(json))
-            {
-                entries = JsonSerializer.Deserialize<List<LogEntry>>(json)?? new List<LogEntry>();
-            }
-        }
-        entries.Add(entry);
+            var filePath = SettingsManager.Settings.LogFilePath;
+            var entries = new List<LogEntry>();
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        var updatedJson = JsonSerializer.Serialize(entries, options);
-        await File.WriteAllTextAsync(filePath, updatedJson);
+            if (File.Exists(filePath))
+            {
+                var json = await File.ReadAllTextAsync(filePath);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    entries = JsonSerializer.Deserialize<List<LogEntry>>(json) ?? new List<LogEntry>();
+                }
+            }
+            entries.Add(entry);
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var updatedJson = JsonSerializer.Serialize(entries, options);
+            await File.WriteAllTextAsync(filePath, updatedJson);
+            FileLogger.LogInfo($"Log entry saved: {entry.Titel}");
+        }
+        catch (Exception ex)
+        {
+            FileLogger.LogError($"Failed to save log entry: {entry.Titel}", ex);
+            throw;
+        }
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)

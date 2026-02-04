@@ -14,7 +14,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -153,10 +152,17 @@
             </TextBox.Style>
         </TextBox>
 
-        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" 
-                    Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="Spara" Content="Spara" Width="80" Margin="0,0,8,0" Click="Save_Click"/>
-            <Button Name="Avbryt" Content="Avbryt" Width="80" Click="Cancel_Click"/>
-        </StackPanel>
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
+            <TextBlock x:Name="MachineNameLabel" 
+                       HorizontalAlignment="Left" 
+                       VerticalAlignment="Center"
+                       Visibility="Collapsed" 
+                       FontStyle="Italic"
+                       Foreground="Gray"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="Spara" Content="Spara" Width="80" Margin="0,0,8,0" Click="Save_Click"/>
+                <Button Name="Avbryt" Content="Avbryt" Width="80" Click="Cancel_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

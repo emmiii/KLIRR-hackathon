@@ -17,6 +17,7 @@ public static class SettingsManager
     {
         try
         {
+            FileLogger.LogInfo("Loading settings...");
             if (File.Exists(SettingsFilePath))
             {
                 var content = File.ReadAllText(SettingsFilePath);
@@ -24,13 +25,15 @@ public static class SettingsManager
                 if (settings != null)
                 {
                     Settings = settings;
+                    FileLogger.LogInfo("Settings loaded successfully.");
                     return;
                 }
             }
+            FileLogger.LogInfo("No settings file found, using defaults.");
         }
-        catch
+        catch (Exception ex)
         {
-            // Fall through to create default settings
+            FileLogger.LogError("Failed to load settings", ex);
         }
         
         Settings = new AppSettings();
@@ -49,10 +52,11 @@ public static class SettingsManager
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(Settings, options);
             File.WriteAllText(SettingsFilePath, json);
+            FileLogger.LogInfo("Settings saved successfully.");
         }
-        catch
+        catch (Exception ex)
         {
-            // Silently fail if settings cannot be saved
+            FileLogger.LogError("Failed to save settings", ex);
         }
     }
 }

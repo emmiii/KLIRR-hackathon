@@ -93,7 +93,7 @@
                             <GridViewColumn Header="Tid" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Tid}" ToolTip="{Binding Tid}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding TidDisplay}" ToolTip="{Binding TidDisplay}" TextTrimming="CharacterEllipsis"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
