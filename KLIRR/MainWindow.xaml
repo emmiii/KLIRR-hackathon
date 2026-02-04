@@ -44,6 +44,14 @@
             <Setter Property="BorderThickness" Value="0,0,1,1"/>
             <Setter Property="Padding" Value="4,2"/>
         </Style>
+        <Style x:Key="AlternatingRowStyle" TargetType="ListViewItem">
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#FFF0F0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     
     <Grid>
@@ -77,7 +85,9 @@
                           ItemsSource="{Binding LogEntriesView}" 
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           MouseDoubleClick="Loggar_MouseDoubleClick"
-                          BorderThickness="0">
+                          BorderThickness="0"
+                          AlternationCount="2"
+                          ItemContainerStyle="{StaticResource AlternatingRowStyle}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Tid" Width="150">
@@ -174,8 +184,15 @@
         <Button x:Name="NyLogg" Content="Ny logg" Grid.Row="2" Grid.Column="1" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Ny_Logg_Click"/> 
         <Button x:Name="Exportera" Content="Exportera" Grid.Row="2" Grid.Column="2" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Exportera_Click"/> 
         <Button x:Name="Importera" Content="Importera" Grid.Row="2" Grid.Column="3" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Importera_Click"/> 
-        <Button x:Name="Inställningar" Content="Inställningar" Grid.Row="2" Grid.Column="4" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Installningar_Click"/> 
-        <Button x:Name="RefreshButton" Content="Uppdatera" Grid.Row="2" Grid.Column="5" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Refresh_Click"/> 
+
+        <StackPanel Grid.Row="2" Grid.Column="5" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+            <Button Click="Refresh_Click" ToolTip="Uppdatera" ToolTipService.InitialShowDelay="200" Padding="8,2" Width="35" Height="25" Margin="0,0,0,6">
+                <TextBlock Text="↻" FontSize="14"/>
+            </Button>
+            <Button Click="Installningar_Click" ToolTip="Inställningar" ToolTipService.InitialShowDelay="200" Padding="8,2" Width="35" Height="25">
+                <TextBlock Text="⚙" FontSize="14"/>
+            </Button>
+        </StackPanel>
         
     </Grid>
 </Window>

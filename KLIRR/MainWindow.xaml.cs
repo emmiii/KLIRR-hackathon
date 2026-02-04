@@ -116,6 +116,7 @@ public partial class MainWindow : Window
             try
             {
                 File.Copy(SettingsManager.Settings.LogFilePath, saveFileDialog.FileName, overwrite: true);
+                MessageBox.Show($"Loggen har exporterats till {saveFileDialog.FileName}.", "Export", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             catch (Exception ex)
             {
@@ -158,10 +159,10 @@ public partial class MainWindow : Window
                 }
 
                 var existingSet = existingEntries
-                    .Select(e => (e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall))
+                    .Select(e => (e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay))
                     .ToHashSet();
                 var uniqueImported = importedEntries
-                    .Where(e => !existingSet.Contains((e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall)))
+                    .Where(e => !existingSet.Contains((e.Tid, e.Titel, e.Beskrivning, e.Avdelning, e.Utfall, e.TaggarDisplay)))
                     .ToList();
 
                 existingEntries.AddRange(uniqueImported);
